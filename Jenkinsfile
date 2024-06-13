@@ -24,7 +24,7 @@ pipeline {
                     withCredentials([
                             string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
                     ]) {
-                        sh 'docker-compose up --scale proyectos-micros=2' //sh 'docker-compose up -d'
+                        sh 'docker-compose up -d'
                     }
                 }
             }
