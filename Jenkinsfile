@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clonar el Repositorio'){
             steps {
-                git branch: 'main', url: 'https://github.com/JennyIzquierdo/escalamiento-de-aplicaciones---Tecnolog-a-Web.git'
+                git branch: 'main', url: 'https://github.com/JennyIzquierdo/Automatizaci-n-usando-Jenkins.git'
             }
         }
         stage('Construir imagen de Docker'){
@@ -24,7 +24,7 @@ pipeline {
                     withCredentials([
                             string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
                     ]) {
-                        sh 'docker-compose up -d'
+                        sh 'docker-compose up --scale proyectos-micros=2' //sh 'docker-compose up -d'
                     }
                 }
             }
@@ -36,7 +36,7 @@ pipeline {
             emailext (
                 subject: "Status del build: ${currentBuild.currentResult}",
                 body: "Se ha completado el build. Puede detallar en: ${env.BUILD_URL}",
-                to: "indira.hamdam@est.iudigital.edu.co",
+                to: "jenny.izquierdo@est.iudigital.edu.co",
                 from: "jenkins@iudigital.edu.co"
             )
         }
