@@ -2,29 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Clonar el Repositorio'){
+        stage('Clonar el Repositorio') {
             steps {
                 git branch: 'main', url: 'https://github.com/JennyIzquierdo/Automatizaci-n-usando-Jenkins.git'
             }
         }
-        stage('Construir imagen de Docker'){
+        stage('Construir imagen de Docker') {
             steps {
                 script {
-                    withCredentials([
-                        string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
-                    ]) {
-                        docker.build('proyectos-micros:v1', '--build-arg MONGO_URI=${MONGO_URI} .')
+                    withCredentials([string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')]) {
+                        docker.build('proyectos-micros:v1', "--build-arg MONGO_URI=${MONGO_URI} .")
                     }
                 }
             }
         }
-        stage('Desplegar contenedores Docker'){
+        stage('Desplegar contenedores Docker') {
             steps {
                 script {
-                    withCredentials([
-                            string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')
-                    ]) {
-                        sh 'docker-compose up -d'
+                    withCredentials([string(credentialsId: 'MONGO_URI', variable: 'MONGO_URI')]) {
+                        sh 'docker-compose up --scale proyectos-micros=2' //sh 'docker-compose up -d'
                     }
                 }
             }
@@ -33,7 +29,7 @@ pipeline {
 
     post {
         always {
-            emailext (
+            emailext(
                 subject: "Status del build: ${currentBuild.currentResult}",
                 body: "Se ha completado el build. Puede detallar en: ${env.BUILD_URL}",
                 to: "jenny.izquierdo@est.iudigital.edu.co",
